@@ -1,0 +1,9 @@
+# Syntax Coloring for Beeper Lib
+# Datatypes (KEYWORD1)
+Beeper	KEYWORD1
+
+# Methods and Functions (KEYWORD2)
+push	KEYWORD2
+Update	KEYWORD2
+
+# Constants (LITERAL1)
