@@ -2,10 +2,12 @@
 
 #define WAIT -1
 
-Queue::Queue(){
+Queue::Queue(int max_len){
   top = 0;
   bottom = 0;
   s = 0;
+  this->max_len = max_len;
+  queue = new unsigned long[max_len];
 }
 int Queue::getSize(){
   return s;
@@ -14,23 +16,23 @@ bool Queue::isEmpty(){
   return s==0;
 }
 bool Queue::push(unsigned long v){
-  if(s >= QUEUE_MAX_LEN) return false;
+  if(s >= max_len) return false;
   queue[bottom++] = v;
-  if(bottom == QUEUE_MAX_LEN) bottom = 0;
+  if(bottom == max_len) bottom = 0;
   s++;
   return true;
 }
 unsigned long Queue::pop(){
   if(isEmpty()) return 0;
   long ret = queue[top++];
-  if(top == QUEUE_MAX_LEN) top = 0;
+  if(top == max_len) top = 0;
   s--;
   return ret;
 }
 
 
 
-Beeper::Beeper(int pin)
+Beeper::Beeper(int pin, int max_len = QUEUE_DEFAULT_MAX_LEN)
 {
   beepPin = pin;
   pinMode(beepPin, OUTPUT);
@@ -41,13 +43,16 @@ Beeper::Beeper(int pin)
   
   state = WAIT; 
   previousMillis = 0;
+
+  OnTimeQueue = new Queue(max_len);
+  OffTimeQueue = new Queue(max_len);
 }
 
 void Beeper::push(unsigned long ontime, unsigned long offtime)
 {
   noInterrupts();
-  OnTimeQueue.push(ontime);
-  OffTimeQueue.push(offtime);
+  OnTimeQueue->push(ontime);
+  OffTimeQueue->push(offtime);
   interrupts();
 }
 
@@ -65,11 +70,11 @@ void Beeper::Update(unsigned long currentMillis)
   switch (state)
   {
   case WAIT:
-    if(OnTimeQueue.isEmpty()){
+    if(OnTimeQueue->isEmpty()){
       break;
     }
-    OnTime = OnTimeQueue.pop();
-    OffTime = OffTimeQueue.pop();
+    OnTime = OnTimeQueue->pop();
+    OffTime = OffTimeQueue->pop();
     if(OnTime == 0)
       state = LOW; // WAIT -> LOW
     else{

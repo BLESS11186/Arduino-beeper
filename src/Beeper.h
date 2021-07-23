@@ -7,18 +7,19 @@
 #include "WProgram.h"
 #endif
 
-#define QUEUE_MAX_LEN 50
+#define QUEUE_DEFAULT_MAX_LEN 50
 
 class Queue
 {
     private:
-        unsigned long queue[QUEUE_MAX_LEN];
+        unsigned long *queue;
         int top;
         int bottom;
         int s;
+        int max_len;
 
     public:
-        Queue();
+        Queue(int max_len);
         int getSize();
         bool isEmpty();
         bool push(unsigned long v);
@@ -31,8 +32,8 @@ class Beeper
         int beepPin;      
         unsigned long OnTime;     // milliseconds of on-time
         unsigned long OffTime;    // milliseconds of off-time
-        Queue OnTimeQueue;
-        Queue OffTimeQueue;
+        Queue *OnTimeQueue;
+        Queue *OffTimeQueue;
     
         // These maintain the current state
         volatile int state;                     // ledState used to set the LED
@@ -41,7 +42,7 @@ class Beeper
   // Constructor - creates a Flasher 
   // and initializes the member variables and state
     public:
-        Beeper(int pin);
+        Beeper(int pin, int max_len = QUEUE_DEFAULT_MAX_LEN);
 
         void push(unsigned long ontime, unsigned long offtime);
         

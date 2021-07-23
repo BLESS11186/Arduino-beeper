@@ -1,8 +1,8 @@
 #include <Beeper.h>
 /* each 5ms update beeper */
 #define UPDATE_FREQ 5
-/* Use beeper pin with 4 */
-Beeper beep(4);
+/* Use beeper pin with 4, queue size is 5*/
+Beeper beep(12, 5);
 
 void setup() {
   // set timer for multiprocessing
@@ -13,6 +13,11 @@ void setup() {
 
   /* beep 200ms & off 100ms */
   beep.push(200, 100);
+  beep.push(200, 100);
+  beep.push(200, 100);
+  beep.push(200, 100);
+  beep.push(200, 100);
+  delay(5000);
 }
 
 /* Update signal */
@@ -24,4 +29,4 @@ SIGNAL(TIMER0_COMPA_vect)
 } 
 
 void loop() {
-}w
+}
